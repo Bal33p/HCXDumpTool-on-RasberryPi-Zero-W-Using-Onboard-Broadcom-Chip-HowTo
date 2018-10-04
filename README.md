@@ -13,7 +13,7 @@ Install image on high speed SD card.
 
 https://www.raspberrypi.org/documentation/installation/installing-images/README.md
 
-I have a test Raspberry PI Zero W set up with the pins installed so I can connect using the PIUART and test my pinout for GPIO Support. Link for PIUART
+I have a test Raspberry PI Zero W set up with the Header installed so I can connect using the PIUART and test my pinout for GPIO Support. Link for PIUART
 
 https://www.adafruit.com/product/3589?gclid=EAIaIQobChMI_vKNmsLr3QIVARFpCh31iQ_FEAQYBCABEgKi4PD_BwE
 
@@ -141,45 +141,89 @@ Install nexutil:
 NOTE:I have found that I am unable to  get monitor mode working if wpa supplicant is installed.
 
 	apt-get remove wpasupplicant
+	
  Note: To connect to regular access points you have to execute the following command first:
-o	nexutil -m0
-Optional: To make the RPI3 load the modified driver after reboot: 
+ 
+	nexutil -m0
+	
+Optional: To make the RPI3 load the modified driver after reboot:
+
 •	Find the path of the default driver at reboot:
 
-o	modinfo brcmfmac | grep brcmfmac.ko 
+	modinfo brcmfmac | grep brcmfmac.ko 
 
-•	Backup the original driver: 
-o	mv "<PATH TO THE DRIVER>/brcmfmac.ko" "<PATH TO THE DRIVER>/brcmfmac.ko.orig"
+•	Backup the original driver:
+
+	mv "<PATH TO THE DRIVER>/brcmfmac.ko" "<PATH TO THE DRIVER>/brcmfmac.ko.orig"
+	
 •	Copy the modified driver:
-o	cp /opt/nexmon/patches/bcm43430a1/7_45_41_26/nexmon/brcmfmac_kernel49/brcmfmac.ko /lib/modules/4.14.62+/kernel/drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko
+
+	cp /opt/nexmon/patches/bcm43430a1/7_45_41_26/nexmon/brcmfmac_kernel49/brcmfmac.ko /lib/modules/4.14.62+/kernel/drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko
+	
 •	Probe all modules and generate new dependency:
-o	depmod -a
+
+	depmod -a
+	
 •	The new driver should be loaded by default after reboot:
-o	reboot 
+
+	reboot
+	
 Using the Monitor Mode patch
-•	Thanks to the prior work of Mame82, you can setup a new monitor mode interface by executing: 
-o	iw phy `iw dev wlan0 info | gawk '/wiphy/ {printf "phy" $2}'` interface add mon0 type monitor
-•	To activate monitor mode in the firmware, simply set the interface up: 
-o	ifconfig mon0 up.
-•	Monitor mode is now active. There is no need to call airmon-ng.
-•	The interface already set the Radiotap header, therefore, tools like tcpdump or airodump-ng can be used out of the box: 
-o	tcpdump -i mon0
 
+•	Thanks to the prior work of Mame82, you can setup a new monitor mode interface by executing:
 
+	iw phy `iw dev wlan0 info | gawk '/wiphy/ {printf "phy" $2}'` interface add mon0 type monitor
+	
+•	To activate monitor mode in the firmware, simply set the interface up:
 
-Optional: To make the RPI3 load the modified driver after reboot: 
-o	Find the path of the default driver at reboot: modinfo brcmfmac #the first line should be the full path
-o	Backup the original driver: mv "<PATH TO THE DRIVER>/brcmfmac.ko" "<PATH TO THE DRIVER>/brcmfmac.ko.orig"
-o	Get Kernel version info: uname -a
-o	Copy the modified driver for (Kernel 4.9): cp /home/pi/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/brcmfmac_kernel49/brcmfmac.ko "<PATH TO THE DRIVER>/"
-o	Copy the modified driver (Kernel 4.14): cp /opt/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/brcmfmac_4.14.y-nexmon/brcmfmac.ko "<PATH TO THE DRIVER>/"
-o	Probe all modules and generate new dependency: depmod -a
-o	The new driver should be loaded by default after reboot: reboot  * Note: It is possible to connect to an access point or run your own access point in parallel to the monitor mode interface on the wlan0 interface
+	ifconfig mon0 up
+	
+•	Monitor mode is now active. There is no need to call airmon-ng
+
+•	The interface already set the Radiotap header, therefore, tools like tcpdump or airodump-ng can be used out of the box:
+
+	tcpdump -i mon0
+
+Optional: To make the RPI3 load the modified driver after reboot:
+
+•	Find the path of the default driver at reboot
+
+	modinfo brcmfmac #the first line should be the full path
+
+•	Backup the original driver
+	
+	mv "<PATH TO THE DRIVER>/brcmfmac.ko" "<PATH TO THE DRIVER>/brcmfmac.ko.orig"
+	
+	Get Kernel version info: uname -a
+
+•	Copy the modified driver for (Kernel 4.9):
+	
+	cp /home/pi/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/brcmfmac_kernel49/brcmfmac.ko "<PATH TO THE DRIVER>/"
+	
+•	Copy the modified driver (Kernel 4.14)
+
+	cp /opt/nexmon/patches/bcm43430a1/7_45_41_46/nexmon/brcmfmac_4.14.y-nexmon/brcmfmac.ko "<PATH TO THE DRIVER>/"
+	
+•	Probe all modules and generate new dependency
+	
+	depmod -a
+
+•	The new driver should be loaded by default after reboot:
+	
+	reboot
+
+* Note: It is possible to connect to an access point or run your own access point in parallel to the monitor mode interface on the wlan0 interface
+
 •	I have found that I have to run these two commands every time I want to run monitor mode so, I have added the following two lines to /etc/rc.local script at the bottom before exit 0
-o	iw phy `iw dev wlan0 info | gawk '/wiphy/ {printf "phy" $2}'` interface add mon0 type monitor
-o	ifconfig mon0 up
-o	Save and reboot 
+
+	iw phy `iw dev wlan0 info | gawk '/wiphy/ {printf "phy" $2}'` interface add mon0 type monitor
+
+	ifconfig mon0 up
+
+	Save and reboot
+
 Example of rc.local edits:
+
 GNU nano 2.7.4                  File: etc/rc.local                  Modified  
 
 #   
