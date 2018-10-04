@@ -5,79 +5,142 @@ NONE OF THIS IS POSSIBLE WITHOUT THE GREAT WORK OF ZERBEA AND SEEMOO
 Rasberry Pi Zero W with HCXDumpTool. Installed and functional using the onboard Broadcom bcm43430 WIFI chip on Raspian Stretch lite OS
  
 
-Download and install the Raspian Stretch Light image located at;
+Download and install the Raspian Stretch Light image:
+
 https://www.raspberrypi.org/downloads/raspbian/
 
-Install image on high speed SD card
+Install image on high speed SD card.
+
 https://www.raspberrypi.org/documentation/installation/installing-images/README.md
 
 I have a test Raspberry PI Zero W set up with the pins installed so I can connect using the PIUART and test my pinout for GPIO Support. Link for PIUART
+
 https://www.adafruit.com/product/3589?gclid=EAIaIQobChMI_vKNmsLr3QIVARFpCh31iQ_FEAQYBCABEgKi4PD_BwE
 
 If you would like to us the PIUART adapter:
+
 In /boot/config.txt located on the SD card add enable_uart=1 on the last line and save.
+
 https://learn.adafruit.com/adafruit-piuart-usb-console-and-power-add-on-for-raspberry-pi/enabling-serial-console
 
-Place the SD card into your PI and make sure you have the PI connected to your PC. 
+Place the SD card into your PI and make sure you have the PI connected to your PC.
+
 •	Boot PI and Login
-o	U = pi
-o	P = raspberry
+
+ U = pi
+
+ P = raspberry
+
 •	Elevate Permissions
-o	sudo su
+
+ sudo su
+
 •	Install the kernel headers to build the driver and some dependencies: 
-o	sudo apt install raspberrypi-kernel-headers libgmp3-dev gawk qpdf bison flex make git tcpdump libpthread-stubs0-dev
-o	cd /opt/
-o	git clone git://git.drogon.net/wiringPi
-o	cd ~/wiringPi
-o	$ ./build
+
+sudo apt install raspberrypi-kernel-headers libgmp3-dev gawk qpdf bison flex make git tcpdump libpthread-stubs0-dev
+
+ cd /opt/
+
+	git clone git://git.drogon.net/wiringPi
+
+	cd ~/wiringPi
+
+	$ ./build
+
+
 •	Upgrade your Raspbian OS installation:
-o	apt-get update && apt-get upgrade
+
+	apt-get update && apt-get upgrade
+
 •	Install PreRecs
-o	apt install git libpcap-dev libcurl4-openssl-dev libssl-dev
+
+	apt install git libpcap-dev libcurl4-openssl-dev libssl-dev
+
 •	Install libpcap
-o	http://www.linuxfromscratch.org/blfs/view/svn/basicnet/libpcap.html
-o	wget http://www.tcpdump.org/release/libpcap-1.8.1.tar.gz
+
+	http://www.linuxfromscratch.org/blfs/view/svn/basicnet/libpcap.html
+
+	wget http://www.tcpdump.org/release/libpcap-1.8.1.tar.gz
+
 •	Download NEXMON
-o	cd /opt
-o	git clone https://github.com/seemoo-lab/nexmon.git
+
+	cd /opt
+
+	git clone https://github.com/seemoo-lab/nexmon.git
 
 Build patches for bcm43430a1 on the RPI3/Zero W using Raspbian Stretch
+
 https://github.com/seemoo-lab/nexmon#build-patches-for-bcm43430a1-on-the-rpi3zero-w-using-raspbian-stretch-recommended
-•	Make sure the following commands are executed as root: 
-o	sudo su
+
+•	Make sure the following commands are executed as root:
+
+	sudo su
+
 •	Clone our repository:
-o	git clone https://github.com/seemoo-lab/nexmon.git
+
+	git clone https://github.com/seemoo-lab/nexmon.git
+
 •	Go into the root directory of our repository:
-o	cd nexmon
+
+	cd nexmon
+
 •	Check if /usr/lib/arm-linux-gnueabihf/libisl.so.10 exists
-o	ls /usr/lib/arm-linux-gnueabihf/libisl.so.10
-•	 if not, compile it from source, install and create symLink: 
-o	cd buildtools/isl-0.10
-o	./configure
-o	 make
-o	 make install
-o	 ln -s /usr/local/lib/libisl.so /usr/lib/arm-linux-gnueabihf/libisl.so.10
-Setup the build environment for compiling firmware patches 
+
+	ls /usr/lib/arm-linux-gnueabihf/libisl.so.10
+
+•	 if not, compile it from source, install and create symLink:
+
+	cd buildtools/isl-0.10
+	
+	./configure
+	
+	 make
+		
+	 make install
+		
+	 ln -s /usr/local/lib/libisl.so /usr/lib/arm-linux-gnueabihf/libisl.so.10
+		
+Setup the build environment for compiling firmware patches
+
 •	Return to the nexmon root dir and setup the build environment:
-o	cd ../../
-o	source setup_env.sh
+
+	cd ../../
+	
+	source setup_env.sh
+	
 •	Compile some build tools and extract the ucode and flashpatches from the original firmware files:
-o	make
+
+	make
+	
 •	Go to the patches folder for the bcm43430a1 chipset:
-o	cd patches/bcm43430a1/7_45_41_46/nexmon/ 
-•	Compile a patched firmware: 
-o	make
-•	Generate a backup of your original firmware file: 
-o	make backup-firmware
-•	Install the patched firmware: 
-o	make install-firmware
-Install nexutil: 
+
+	cd patches/bcm43430a1/7_45_41_46/nexmon/
+
+•	Compile a patched firmware:
+
+	make
+
+•	Generate a backup of your original firmware file:
+
+	make backup-firmware
+	
+•	Install the patched firmware:
+	make install-firmware
+	
+Install nexutil:
+
 •	From the root directory of our repository switch to the nexutil folder:
-o	cd nexmon/utilities/nexutil/. 
-•	Compile and install nexutil: 
-o	make && make install.
-•	Optional: remove wpa_supplicant for better control over the WiFi interface. NOTE:I have found that I am unable to  get monitor mode working if wpa supplicant is installed
-o	apt-get remove wpasupplicant
+
+	cd nexmon/utilities/nexutil/. 
+•	Compile and install nexutil:
+
+	make && make install.
+	
+•	Optional: remove wpa_supplicant for better control over the WiFi interface.
+
+NOTE:I have found that I am unable to  get monitor mode working if wpa supplicant is installed.
+
+	apt-get remove wpasupplicant
  Note: To connect to regular access points you have to execute the following command first:
 o	nexutil -m0
 Optional: To make the RPI3 load the modified driver after reboot: 
