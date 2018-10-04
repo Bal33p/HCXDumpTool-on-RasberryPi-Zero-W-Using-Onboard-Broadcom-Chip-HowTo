@@ -1,5 +1,6 @@
 # Tinkering
 HCXDumpTool on RasberryPi Zero W using onboard Broadcom chip HowTo
+
 NONE OF THIS IS POSSIBLE WITHOUT THE GREAT WORK OF ZERBEA AND SEEMOO
 
 Rasberry Pi Zero W with HCXDumpTool. Installed and functional using the onboard Broadcom bcm43430 WIFI chip on Raspian Stretch lite OS
@@ -242,13 +243,19 @@ At this point, monitor mode is active on system startup. There is no need to cal
 o	 tcpdump -i mon0 ( confirm Monitor mode is working then cancel)	
 
 
-Install HCXDumpTool by ZerBea 
-hcxdumptool
-o	git clone https://github.com/ZerBea/hcxdumptool.git
+Install HCXDumpTool by ZerBea
+
+•	hcxdumptool
+
+	git clone https://github.com/ZerBea/hcxdumptool.git
+
 •	Compile hcxdumptool
-o	cd hcxdumptool
-o	Make
-o	make install (as super user)
+
+	cd hcxdumptool
+	Make
+	make install (as super user)
+	
 •	or (with GPIO support - hardware mods required)
-o	make GPIOSUPPORT=on
-o	make GPIOSUPPORT=on install (as super us
+
+	make GPIOSUPPORT=on
+	make GPIOSUPPORT=on install (as super us
