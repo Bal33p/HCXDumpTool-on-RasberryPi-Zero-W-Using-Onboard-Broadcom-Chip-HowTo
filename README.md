@@ -1,9 +1,9 @@
 # Tinkering
-HCXDumpTool on RasberryPi Zero W using onboard Broadcom chip HowTo
+HCXDumpTool on RasberryPi Zero W Using Onboard Broadcom Chip HowTo
 
-NONE OF THIS IS POSSIBLE WITHOUT THE GREAT WORK OF ZERBEA AND SEEMOO
+NONE OF THIS IS POSSIBLE WITHOUT THE GREAT WORK OF ZERBEA AND SEEMOO HUGE THANK YOU FOR THE AMAZING WORK DONE BY THESE PEOPLE.
 
-Rasberry Pi Zero W with HCXDumpTool. Installed and functional using the onboard Broadcom bcm43430 WIFI chip on Raspian Stretch lite OS
+Rasberry Pi Zero W with HCXDumpTool installed and functional using the onboard Broadcom bcm43430 WIFI chip on Raspian Stretch lite OS
  
 
 Download and install the Raspian Stretch Light image:
@@ -28,26 +28,20 @@ Place the SD card into your PI and make sure you have the PI connected to your P
 
 •	Boot PI and Login
 
- U = pi
-
- P = raspberry
+ 	U = pi
+ 	P = raspberry
 
 •	Elevate Permissions
 
- sudo su
+	sudo su
 
 •	Install the kernel headers to build the driver and some dependencies: 
 
-sudo apt install raspberrypi-kernel-headers libgmp3-dev gawk qpdf bison flex make git tcpdump libpthread-stubs0-dev
-
- cd /opt/
-
+	sudo apt install raspberrypi-kernel-headers libgmp3-dev gawk qpdf bison flex make git tcpdump libpthread-stubs0-dev
+ 	cd /opt/
 	git clone git://git.drogon.net/wiringPi
-
 	cd ~/wiringPi
-
 	$ ./build
-
 
 •	Upgrade your Raspbian OS installation:
 
@@ -66,20 +60,15 @@ sudo apt install raspberrypi-kernel-headers libgmp3-dev gawk qpdf bison flex mak
 •	Download NEXMON
 
 	cd /opt
-
 	git clone https://github.com/seemoo-lab/nexmon.git
 
-Build patches for bcm43430a1 on the RPI3/Zero W using Raspbian Stretch
+•	Build patches for bcm43430a1 on the RPI3/Zero W using Raspbian Stretch
 
-https://github.com/seemoo-lab/nexmon#build-patches-for-bcm43430a1-on-the-rpi3zero-w-using-raspbian-stretch-recommended
+	https://github.com/seemoo-lab/nexmon#build-patches-for-bcm43430a1-on-the-rpi3zero-w-using-raspbian-stretch-recommended
 
 •	Make sure the following commands are executed as root:
 
 	sudo su
-
-•	Clone our repository:
-
-	git clone https://github.com/seemoo-lab/nexmon.git
 
 •	Go into the root directory of our repository:
 
@@ -89,16 +78,12 @@ https://github.com/seemoo-lab/nexmon#build-patches-for-bcm43430a1-on-the-rpi3zer
 
 	ls /usr/lib/arm-linux-gnueabihf/libisl.so.10
 
-•	 if not, compile it from source, install and create symLink:
+•	if not, compile it from source, install and create symLink:
 
 	cd buildtools/isl-0.10
-	
 	./configure
-	
-	 make
-		
-	 make install
-		
+	 make	
+	 make install	
 	 ln -s /usr/local/lib/libisl.so /usr/lib/arm-linux-gnueabihf/libisl.so.10
 		
 Setup the build environment for compiling firmware patches
@@ -106,7 +91,6 @@ Setup the build environment for compiling firmware patches
 •	Return to the nexmon root dir and setup the build environment:
 
 	cd ../../
-	
 	source setup_env.sh
 	
 •	Compile some build tools and extract the ucode and flashpatches from the original firmware files:
@@ -125,16 +109,18 @@ Setup the build environment for compiling firmware patches
 
 	make backup-firmware
 	
-•	Install the patched firmware:
+•	Install the patched firmware
+
 	make install-firmware
 	
 Install nexutil:
 
 •	From the root directory of our repository switch to the nexutil folder:
 
-	cd nexmon/utilities/nexutil/. 
+	cd nexmon/utilities/nexutil/
+	
 •	Compile and install nexutil:
-
+	
 	make && make install.
 	
 •	Optional: remove wpa_supplicant for better control over the WiFi interface.
@@ -143,7 +129,7 @@ NOTE:I have found that I am unable to  get monitor mode working if wpa supplican
 
 	apt-get remove wpasupplicant
 	
- Note: To connect to regular access points you have to execute the following command first:
+Note: To connect to regular access points you have to execute the following command first:
  
 	nexutil -m0
 	
@@ -213,8 +199,6 @@ Optional: To make the RPI3 load the modified driver after reboot:
 	
 	reboot
 
-* Note: It is possible to connect to an access point or run your own access point in parallel to the monitor mode interface on the wlan0 interface
-
 •	I have found that I have to run these two commands every time I want to run monitor mode so, I have added the following two lines to /etc/rc.local script at the bottom before exit 0
 
 	iw phy `iw dev wlan0 info | gawk '/wiphy/ {printf "phy" $2}'` interface add mon0 type monitor
@@ -223,27 +207,29 @@ Optional: To make the RPI3 load the modified driver after reboot:
 
 	Save and reboot
 
-Example of rc.local edits:
+•	Example of rc.local edits:
 
-GNU nano 2.7.4                  File: etc/rc.local                  Modified  
+	GNU nano 2.7.4                  File: etc/rc.local                  Modified  
 
-#   
-# By default this script does nothing.
+	#   
+	# By default this script does nothing.
 
-# Print the IP address
-_IP=$(hostname -I) || true
-if [ "$_IP" ]; then
-  printf "My IP address is %s\n" "$_IP"
-fi
-iw phy `iw dev wlan0 info | gawk '/wiphy/ {printf "phy" $2}'` interface add mon$
-ifconfig mon0 up
-exit 0
-At this point, monitor mode is active on system startup. There is no need to call airmon-ng.
+	# Print the IP address
+	_IP=$(hostname -I) || true
+	if [ "$_IP" ]; then
+  		printf "My IP address is %s\n" "$_IP"
+	fi
+	iw phy `iw dev wlan0 info | gawk '/wiphy/ {printf "phy" $2}'` interface add mon$
+	ifconfig mon0 up
+	exit 0
+	
+•	At this point, monitor mode is active on system startup. There is no need to call airmon-ng.
+
 •	The interface has already set the Radiotap header, therefore, tools like tcpdump or airodump-ng can be used out of the box:
-o	 tcpdump -i mon0 ( confirm Monitor mode is working then cancel)	
 
+	tcpdump -i mon0 ( confirm Monitor mode is working then cancel)	
 
-Install HCXDumpTool by ZerBea
+•	Install HCXDumpTool by ZerBea
 
 •	hcxdumptool
 
