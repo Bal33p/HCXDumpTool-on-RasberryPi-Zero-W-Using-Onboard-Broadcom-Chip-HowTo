@@ -4,8 +4,8 @@ HCXDumpTool on RasberryPi Zero W Using Onboard Broadcom Chip HowTo
 NONE OF THIS IS POSSIBLE WITHOUT THE GREAT WORK OF ZERBEA AND SEEMOO HUGE THANK YOU FOR THE AMAZING WORK DONE BY THESE PEOPLE.
 
 Rasberry Pi Zero W with HCXDumpTool installed and functional using the onboard Broadcom bcm43430 WIFI chip on Raspian Stretch lite OS
- t
- 
+
+
 
 Download and install the Raspian Stretch Light image:
 
